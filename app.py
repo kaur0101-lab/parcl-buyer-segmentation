@@ -48,8 +48,26 @@ with col2:
     st.plotly_chart(fig_loan, use_container_width=True)
 
 st.subheader("Geographic Buyer Analysis")
-fig_geo = px.histogram(filtered_df, x='region', color='segment_name', barmode='stack', title="Buyer Distribution by Geographic Region")
-st.plotly_chart(fig_geo, use_container_width=True)
+top_10_regions = df['region'].value_counts().nlargest(10).index
+filtered_region_df = df[df['region'].isin(top_10_regions)]
+
+fig_region = px.histogram(
+    filtered_region_df,
+    y="region",
+    color="segment_name",
+    title="Top 10 Regions by Buyer Segment",
+    orientation='h'
+)
+
+fig_region.update_layout(
+    yaxis={'categoryorder': 'total ascending'},
+    xaxis_title="Number of Buyers",
+    yaxis_title="Region",
+    legend_title="Segment",
+    template="plotly_dark"
+)
+
+st.plotly_chart(fig_region, use_container_width=True)
 
 st.subheader("Segment Insights Panel")
 insights = filtered_df.groupby('segment_name').agg(
